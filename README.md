@@ -1,3 +1,5 @@
+<img src="docs/icon.png" width="128" height="128" alt="YNAB Sankey app icon" align="right">
+
 # YNAB Sankey
 
 A macOS app that draws a month's or a year's spending from a [YNAB](https://www.ynab.com) budget as a
@@ -24,8 +26,14 @@ swift test                      # unit tests
 ```
 
 On first launch, paste a YNAB Personal Access Token (YNAB → Account Settings → Developer Settings →
-New Token). The app loads your most recently edited budget; switch budgets from the toolbar if you
-have more than one.
+New Token).
+
+### Which budget it shows
+
+The first time it connects, the app picks the budget you edited most recently in YNAB. If your
+account has more than one budget, a **Budget** menu appears in the toolbar so you can switch. The
+app remembers your choice and opens that budget next time. If the remembered budget is later deleted
+or the token can't see it any more, it goes back to the most recently edited one.
 
 ## Using it
 
