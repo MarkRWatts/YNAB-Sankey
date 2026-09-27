@@ -30,10 +30,12 @@ New Token).
 
 ### Which budget it shows
 
-The first time it connects, the app picks the budget you edited most recently in YNAB. If your
-account has more than one budget, a **Budget** menu appears in the toolbar so you can switch. The
-app remembers your choice and opens that budget next time. If the remembered budget is later deleted
-or the token can't see it any more, it goes back to the most recently edited one.
+By default the app opens the budget you edited most recently in YNAB. To always open a particular
+budget, choose it under **YNAB Sankey → Settings… → Default budget**. If your account has more than
+one budget, a **Budget** menu in the toolbar lets you switch. That switch only lasts until you quit;
+the Settings choice is what the app opens with next time. If the default budget is later deleted or
+the token can't see it, the app falls back to the most recently edited one. Disconnecting clears
+the default.
 
 ## Using it
 

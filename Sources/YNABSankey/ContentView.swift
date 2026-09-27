@@ -195,7 +195,23 @@ struct SettingsView: View {
     @Environment(AppModel.self) private var model
 
     var body: some View {
+        @Bindable var model = model
         Form {
+            Picker("Default budget", selection: $model.defaultBudgetId) {
+                Text("Most recently edited in YNAB").tag(String?.none)
+                if !model.budgets.isEmpty { Divider() }
+                ForEach(model.budgets) { Text($0.name).tag(Optional($0.id)) }
+                // Keep a saved default selectable even if it's not in the list right now.
+                if let id = model.defaultBudgetId, !model.budgets.contains(where: { $0.id == id }) {
+                    Text("Unavailable budget").tag(Optional(id))
+                }
+            }
+            .disabled(!model.hasToken)
+            Text("The budget YNAB Sankey opens with. Switching budgets in the toolbar only lasts until you quit.")
+                .font(.caption).foregroundStyle(.secondary)
+
+            Divider().padding(.vertical, 6)
+
             LabeledContent("YNAB token") {
                 if model.hasToken {
                     Button("Disconnect…", role: .destructive) { model.forgetToken() }

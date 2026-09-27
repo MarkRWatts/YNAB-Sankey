@@ -15,11 +15,14 @@ final class AppModel {
     private(set) var isLoading = false
     var errorMessage: String?
 
-    var selectedBudgetId: String? = UserDefaults.standard.string(forKey: "budgetId") {
-        didSet {
-            UserDefaults.standard.set(selectedBudgetId, forKey: "budgetId")
-            if oldValue != selectedBudgetId { Task { await loadLedger() } }
-        }
+    /// The budget currently on screen. Switching it from the toolbar lasts for this session only.
+    var selectedBudgetId: String? {
+        didSet { if oldValue != selectedBudgetId { Task { await loadLedger() } } }
+    }
+
+    /// The budget to open at launch (set in Settings); nil means "most recently edited in YNAB".
+    var defaultBudgetId: String? = UserDefaults.standard.string(forKey: "defaultBudgetId") {
+        didSet { UserDefaults.standard.set(defaultBudgetId, forKey: "defaultBudgetId") }
     }
 
     var granularity: Granularity = .month {
@@ -92,6 +95,8 @@ final class AppModel {
     func forgetToken() {
         Keychain.deleteToken()
         hasToken = false
+        defaultBudgetId = nil // a new token may belong to a different YNAB account
+        selectedBudgetId = nil
         budgets = []
         ledger = nil
     }
@@ -105,7 +110,10 @@ final class AppModel {
             budgets = try await YNABClient(token: token).budgets()
                 .sorted { ($0.lastModifiedOn ?? "") > ($1.lastModifiedOn ?? "") }
             if selectedBudget == nil {
-                selectedBudgetId = budgets.first?.id // didSet triggers the ledger load
+                // budgets is sorted most-recently-edited first. A default that has
+                // since been deleted, or isn't visible to this token, falls back to that.
+                let preferred = budgets.first { $0.id == defaultBudgetId } ?? budgets.first
+                selectedBudgetId = preferred?.id // didSet triggers the ledger load
                 isLoading = false
                 return
             }
