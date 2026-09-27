@@ -1,8 +1,15 @@
 import AppKit
 import SwiftUI
 
+/// Single-window app: quit when the window closes, so clicking the Dock
+/// icon afterwards relaunches with a fresh window rather than doing nothing.
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
+}
+
 @main
 struct YNABSankeyApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var model = AppModel()
 
     init() {
@@ -11,7 +18,7 @@ struct YNABSankeyApp: App {
     }
 
     var body: some Scene {
-        WindowGroup("YNAB Sankey") {
+        Window("YNAB Sankey", id: "main") {
             ContentView().environment(model)
         }
         .defaultSize(width: 1400, height: 860)
