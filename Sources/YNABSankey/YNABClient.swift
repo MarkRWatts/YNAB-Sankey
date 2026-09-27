@@ -71,15 +71,20 @@ struct YNABClient: Sendable {
     let token: String
     private static let base = URL(string: "https://api.ynab.com/v1")!
 
+    /// Ephemeral: no disk cache, cookies or credential storage, so neither budget
+    /// data nor the Authorization header ever lands in ~/Library/Caches.
+    private static let session = URLSession(configuration: .ephemeral)
+
     private func get<T: Decodable>(_ path: String, as: T.Type) async throws -> T {
         var request = URLRequest(url: Self.base.appendingPathComponent(path))
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.timeoutInterval = 60
+        request.cachePolicy = .reloadIgnoringLocalCacheData
 
         let data: Data
         let response: URLResponse
         do {
-            (data, response) = try await URLSession.shared.data(for: request)
+            (data, response) = try await Self.session.data(for: request)
         } catch {
             throw YNABError(message: "Couldn't reach YNAB — check your connection and try again.")
         }

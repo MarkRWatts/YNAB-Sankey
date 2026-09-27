@@ -79,6 +79,10 @@ credential (see [`Keychain.swift`](Sources/YNABSankey/Keychain.swift)):
 - **Removed on disconnect.** **YNAB Sankey → Settings… → Disconnect** deletes the Keychain item. You
   can also inspect or delete it in Keychain Access (search for `com.markrwatts.YNABSankey`).
 
+- **Nothing else is kept on disk.** The app's network connection keeps no cache, cookies or
+  credentials, so your budget data lives only in memory until you quit. See
+  [PRIVACY.md](PRIVACY.md) for everything the app stores and how to delete it.
+
 YNAB tokens don't expire on their own. If you think one has leaked, revoke it in YNAB's Developer
 Settings and connect again with a new one.
 
@@ -91,6 +95,11 @@ SANKEY_SNAPSHOT_DIR=docs/screenshots swift test --filter renderSnapshot
 ```
 
 `scripts/make-icon.swift` regenerates `Resources/AppIcon.icns`.
+
+## Privacy
+
+YNAB Sankey talks only to YNAB and keeps nothing but your token, default budget and window position.
+See the [privacy notice](PRIVACY.md).
 
 ## Licence
 
